@@ -1,7 +1,7 @@
 {%extends "master.html"%}
 {%block contenido%}
 <div class="well">
-	<form method="POST" action="" class="form-horizontal">{% csrf_token %}
+	<form method="POST" action="" class="form-horizontal" enctype="multipart/form-data">{% csrf_token %}
 	<div class="form-group">
 		{{pro.as_p}}
 		<input type="submit" value="Aceptar" class="btn btn-success"></input>
