@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^listRes/$', 'appfoodie.views.listRes'),
     url(r'^listPro/$', 'appfoodie.views.listPro'),
     url(r'^listPed/$', 'appfoodie.views.listPed'),
+     url(r'^listUser/$', 'appfoodie.views.listUser'),
     url(r'^listar/Logout/$', 'appfoodie.views.salir', name='Logout'),
     url(r'^gracias/(?P<username>[\w]+)/$', 'appfoodie.views.gracias', name='Gracias'),
     #restframework
@@ -70,4 +71,6 @@ urlpatterns = [
     url(r'^login/registrar/$', 'appfoodie.views.registrar'),
     url(r'^appfoodie/logout/$', 'appfoodie.views.logout_view'),
     url(r'^gracias/(?P<username>[\w]+)/listar$', 'appfoodie.views.listar'),
+    url(r'^productos/', 'appfoodie.views.survey_list'),
+
    ]
