@@ -47,7 +47,8 @@ class UserProfile(models.Model):
 	Telefono = models.CharField(max_length=10,blank=True)
 	Email = models.EmailField()
 	user = models.OneToOneField(settings.AUTH_USER_MODEL) 
-	photo = models.ImageField(upload_to='profiles', blank=True, null=True) 
+	photo = models.ImageField(upload_to='profiles', blank=True, null=True)
+	contra= models.CharField(max_length=30,blank=True,default="")
 
 	def __str__(self): 
 		return self.user.username

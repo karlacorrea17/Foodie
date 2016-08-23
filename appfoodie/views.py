@@ -30,9 +30,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import SurveySerializer 
-# Create your views here.
 
-
+import json as simplejson
 
 def inicio(request):
 	f=FormularioCliente(request.POST or None)
@@ -273,6 +272,7 @@ def registrar(request):
 		r = FormularioClientes(request.POST, request.FILES)
 		if r.is_valid():
 			datos = r.cleaned_data
+
 			ci = datos.get('ci')
 			nombres = datos.get('nombres')
 			apellidos = datos.get('apellidos')
@@ -297,17 +297,23 @@ def registrar(request):
 			user_profile.user = user_model
 			# y le asignamos la photo (el campo, permite datos null)
 			user_profile.photo = photo
+			user_profile.nombres = nombres
+			user_profile.apellidos = apellidos
+			user_profile.direccion = direccion
+			user_profile.email = email
 			# Por ultimo, guardamos tambien el objeto UserProfile
+			user_profile.contra = password
 			user_profile.save()
 			# Ahora, redireccionamos a la pagina gracias.html
 			# Pero lo hacemos con un redirect.
 			return redirect(reverse("Gracias", kwargs={'username':username}))
 	else:
 		r = FormularioClientes()
-		context = {
-			'r': r,
-		}
-		return render(request, "registrar.html", context)
+	context = {
+		'r': r,
+	}
+	return render(request, "registrar.html", context)
+
 
 def gracias(request, username):
     return render(request, "gracias.html", {'username': username})
@@ -337,24 +343,64 @@ def salir(request):
 
 
 def list(request):
-	query = Cliente.objects.all()
-	query = serializers.serialize('json',query)
-	return HttpResponse(query, 'application/json')
+    clientes = Cliente.objects.all() #Modelo del que van a sacar el json
+    mresult = []
+    mreturn = {}
+    for m in clientes:
+         mresult.append({"Nombre": m.Nombre,
+         "Apellido": m.Apellido,
+         "Cedula": m.Cedula,
+         "Direccion": m.Direccion,
+         "Telefono": m.Telefono,
+         "Correo": m.Correo})
+    mreturn['Cliente'] = mresult
+    return HttpResponse(simplejson.dumps(mreturn),'application/json')
 
 def listRes(request):
-	query = Restaurante.objects.all()
-	query = serializers.serialize('json',query)
-	return HttpResponse(query, 'application/json')
+    restaurantes = Restaurante.objects.all()
+    mresult = []
+    mreturn = {}
+    for m in restaurantes:
+        mresult.append({"Nombre": m.Nombre,
+        "Gerente": m.Gerente,
+        "Direccion": m.Direccion,
+        "Telefono": m.Telefono})
+        mreturn['Restaurante'] = mresult
+    return HttpResponse(simplejson.dumps(mreturn),'application/json')
 
 def listPro(request):
-	query = Producto.objects.all()
-	query = serializers.serialize('json',query)
-	return HttpResponse(query, 'application/json')
+	productos= Producto.objects.all()
+	mresult = []
+	mreturn = {}
+	for m in productos:
+	    mresult.append({"Nombre": m.Nombre,
+	    "Precio": str(m.Precio),
+	    "Descripcion": m.Descripcion,
+	    "Imagen":str(m.Imagen)})
+	    mreturn['Producto'] = mresult
+	return HttpResponse(simplejson.dumps(mreturn),'application/json')
+
 
 def listPed(request):
-	query = Pedido.objects.all()
-	query = serializers.serialize('json',query)
-	return HttpResponse(query, 'application/json')
+	pedidos= Pedido.objects.all()
+	mresult = []
+	mreturn = {}
+	for m in pedidos:
+	    mresult.append({"Cliente": m.Cliente,
+	    "Cantidad": m.Cantidad,
+	    "Precio Total": str(m.PrecioTotal)})
+	    mreturn['Producto'] = mresult
+	return HttpResponse(simplejson.dumps(mreturn),'application/json')
+
+def listUser(request):
+	users= UserProfile.objects.all()
+	mresult = []
+	mreturn = {}
+	for m in users:
+	    mresult.append({"Usuario": str(m.user),
+	    "Contra": m.contra})
+	    mreturn['Usuarios'] = mresult
+	return HttpResponse(simplejson.dumps(mreturn),'application/json')
 
 @api_view(['GET', 'POST'])
 def survey_list(request):
